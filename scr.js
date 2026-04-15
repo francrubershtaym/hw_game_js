@@ -2,6 +2,8 @@ const start = document.querySelector('.btn');
 const figure = document.querySelector('.figur');
 const put = document.querySelector('.put');
 const desc = document.querySelector('.desc');
+const span = document.querySelector('.span');
+let count;
 const cli = ["circle(50% at 50% 50%)",
     "ellipse(50% 50% at 50% 50%)",
     "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
@@ -13,7 +15,6 @@ function figureCreate() {
     const parent = document.getElementById('block');
     const div = document.createElement('div');
     div.className = 'figure';
-    parent.appendChild(div);
     div.style.position = "absolute";
     div.style.left = Math.floor(Math.random() * 400) + "px";
     div.style.top = Math.floor(Math.random() * 400) + "px";
@@ -23,7 +24,14 @@ function figureCreate() {
     div.style.height = Math.floor(Math.random() * 10) + 40 + "px";
     div.style.clipPath = cli[Math.floor(Math.random() * cli.length)];
     div.style.backgroundColor = color();
-    parent.replaceChild(div, parent.firstChild);
+    div.addEventListener("click", () => {
+        parent.innerHTML = "";
+        count++;
+
+        figureCreate();
+
+    })
+    parent.appendChild(div);
 
 }
 
@@ -35,13 +43,24 @@ function color() {
 }
 
 
-start.addEventListener('click', () => {
-    for (let i = 0; i < put.value; i++) {
-        setTimeout(() => {
-            desc.innerHTML = "Осталось: " + (put.value - i);
-            figureCreate();
+function startGame(){
+    let time = parseInt(put.value);
+    count = 0
+    span.innerHTML = time;
+    start.disabled = true;
+    figureCreate();
+    
+     countdown = setInterval(() => {
+        time--;
+        span.innerHTML = time ;
+        if (time <= 0) {
+            clearInterval(countdown);
+            block.innerHTML = `<h2> Игра окончена! Вы поймали  ${count} фигур</h2>`;
 
-        }, 1000 * i);
-    }
+            start.disabled = false;
+        }
+    }, 1000);
+}
 
-});
+start.addEventListener('click', startGame);
+
